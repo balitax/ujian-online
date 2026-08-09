@@ -6,28 +6,25 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="@yield('meta_description', 'Platform Ujian Online Terbuka berkecepatan tinggi, aman, dan mudah diakses. Dibangun demi kemaslahatan umat terkhusus pendidikan.')">
-    <meta name="keywords" content="ujian online, cbt, computer based test, aplikasi ujian sekolah, open source, laravel, pendidikan, kemaslahatan umat">
+    <meta name="description" content="@yield('meta_description', 'Platform Ujian Online Terbuka berkecepatan tinggi, aman, dan mudah diakses.')">
+    <meta name="keywords" content="ujian online, cbt, computer based test, aplikasi ujian sekolah, open source, laravel, pendidikan">
     <meta name="author" content="Achmad An'im">
     <meta name="robots" content="index, follow">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('title', 'Beranda') - Open Source Online Exam Platform">
-    <meta property="og:description" content="@yield('meta_description', 'Platform Ujian Online Terbuka berkecepatan tinggi, aman, dan mudah diakses. Dibangun demi kemaslahatan umat terkhusus pendidikan.')">
+    <meta property="og:title" content="@yield('title', 'Beranda') - Ajenono Exam Platform">
+    <meta property="og:description" content="@yield('meta_description', 'Platform Ujian Online Terbuka berkecepatan tinggi, aman, dan mudah diakses.')">
     <meta property="og:image" content="{{ asset('favicon.svg') }}">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary">
-    <meta property="twitter:url" content="{{ url()->current() }}">
-    <meta property="twitter:title" content="@yield('title', 'Beranda') - Open Source Online Exam Platform">
-    <meta property="twitter:description" content="@yield('meta_description', 'Platform Ujian Online Terbuka berkecepatan tinggi, aman, dan mudah diakses. Dibangun demi kemaslahatan umat terkhusus pendidikan.')">
-    <meta property="twitter:image" content="{{ asset('favicon.svg') }}">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="shortcut icon" href="{{ asset('favicon.svg') }}">
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
-    <title>@yield('title', 'Exam System') - Open Source Online Exam Platform</title>
+    <title>@yield('title', 'Exam System') - Ajenono Exam Platform</title>
+    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <style>
         @font-face {
             font-family: 'KFGQPC Uthman Taha Naskh';
@@ -38,493 +35,354 @@
             unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
         }
 
-        :root {
-            /* Warm Light Mode Palette (Default) */
-            --bg-body: #FAF7F5;
-            --bg-card: #FFFFFF;
-            --bg-card-hover: #F1F5F9;
-            --text-main: #1A1A1A;
-            --text-muted: #475569;
-            --primary: #312E81;
-            --primary-hover: #1E1B4B;
-            --accent: #6366F1;
-            --danger: #DC2626;
-            --warning: #F59E0B;
-            --border-color: #CBD5E1;
-            
-            /* Specific Exam Status Palette */
-            --status-answered: #16A34A;
-            --status-unanswered: #E2E8F0;
-            --status-flagged: #F59E0B;
-            --status-active: #2563EB;
-            --status-timer: #DC2626;
-
-            --font-family: 'KFGQPC Uthman Taha Naskh', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans CJK SC', 'Noto Sans CJK JP', 'Microsoft YaHei', 'Meiryo', 'Amiri', 'Traditional Arabic', sans-serif;
-        }
-
-        /* Multilingual RTL Support */
+        /* RTL Support */
         [dir="rtl"] { text-align: right; direction: rtl; font-family: 'KFGQPC Uthman Taha Naskh', 'Amiri', serif; line-height: 2; }
         [dir="auto"] { text-align: start; }
 
-        [data-theme="dark"] {
-            /* Charcoal Dark Mode Palette */
-            --bg-body: #1E293B;
-            --bg-card: #0F172A;
-            --bg-card-hover: #334155;
-            --text-main: #E2E8F0;
-            --text-muted: #94A3B8;
-            --primary: #6366F1;
-            --primary-hover: #4F46E5;
-            --accent: #818CF8;
-            --danger: #EF4444;
-            --warning: #F59E0B;
-            --border-color: #334155;
-            
-            --status-answered: #16A34A;
-            --status-unanswered: #334155;
-            --status-flagged: #F59E0B;
-            --status-active: #3B82F6;
-            --status-timer: #EF4444;
-        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: oklch(var(--b2)); }
+        ::-webkit-scrollbar-thumb { background: oklch(var(--bc) / 0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: oklch(var(--bc) / 0.4); }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            font-family: var(--font-family);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        header {
-            background-color: var(--bg-card);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .navbar {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .brand span {
-            color: var(--text-main);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--primary);
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 0.5rem;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary, .nav-links a.btn-primary {
-            background-color: var(--primary);
-            color: #ffffff !important;
-        }
-
-        .btn-primary:hover, .nav-links a.btn-primary:hover {
-            background-color: var(--primary-hover);
-            color: #ffffff !important;
-        }
-
-        .btn-accent {
-            background-color: var(--accent);
-            color: #ffffff;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: #ffffff;
-        }
-
-        .btn-secondary {
-            background-color: var(--bg-card-hover);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-        }
-
-        .theme-toggle-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 0.4rem 0.75rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-            flex: 1;
-        }
-
-        .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-        }
-
-        .card-header {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-main);
-        }
-
-        .grid-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-box {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.4rem;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background-color: var(--bg-body);
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(49, 46, 129, 0.1);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: var(--bg-body);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
-
-        .alert {
-            padding: 1rem 1.25rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-        }
-
-        .alert-success {
-            background-color: rgba(22, 163, 74, 0.1);
-            border: 1px solid var(--status-answered);
-            color: #15803d;
-        }
-
-        .alert-danger {
-            background-color: rgba(220, 38, 38, 0.1);
-            border: 1px solid var(--danger);
-            color: #b91c1c;
-        }
-
-        /* Custom Glassmorphic Toast & Confirm Modal Engine (Zero External Dependencies) */
-        .toast-container-wrapper {
-            position: fixed;
-            top: 1.25rem;
-            right: 1.25rem;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            pointer-events: none;
-        }
-        .toast-box {
-            pointer-events: auto;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.85rem 1.25rem;
-            border-radius: 0.6rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--text-main);
-            animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .toast-box.success { border-left: 4px solid var(--status-answered); }
-        .toast-box.error { border-left: 4px solid var(--danger); }
-        .toast-box.warning { border-left: 4px solid var(--warning); }
-        .toast-box.info { border-left: 4px solid var(--accent); }
-
-        @keyframes toastSlideIn {
+        /* Toast animation */
+        @keyframes toast-slide-in {
             from { opacity: 0; transform: translateY(-12px) scale(0.96); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-
-        .confirm-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(6px);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: confirmFadeIn 0.2s ease forwards;
-        }
-        .confirm-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 0.85rem;
-            padding: 1.75rem;
-            width: 420px;
-            max-width: 90%;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-            text-align: center;
-            color: var(--text-main);
-        }
-        @keyframes confirmFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        footer {
-            border-top: 1px solid var(--border-color);
-            padding: 1.5rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: auto;
-            background-color: var(--bg-card);
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                flex-wrap: wrap;
-                padding: 0.75rem 1rem;
-                gap: 0.75rem;
-            }
-            .brand-wrapper {
-                flex-wrap: wrap;
-                gap: 0.4rem !important;
-            }
-            .nav-links {
-                gap: 0.6rem;
-                flex-wrap: wrap;
-            }
-            .v1-legacy-btn {
-                font-size: 0.7rem !important;
-                padding: 0.15rem 0.4rem !important;
-            }
-        }
+        .toast-animate-in { animation: toast-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
     @yield('styles')
 </head>
-<body>
-    <header>
-        <div class="navbar">
-            <div class="brand-wrapper" style="display: flex; align-items: center; gap: 0.6rem;">
-                <a href="{{ url('/') }}" class="brand">
-                    <i class="fa-solid fa-graduation-cap"></i> <span>Ajenono V2</span>
-                </a>
-                <a href="http://ajenono.wongcjdw.com" target="_blank" rel="noopener noreferrer" class="v1-legacy-btn" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: underline; background: rgba(99, 102, 241, 0.1); padding: 0.2rem 0.5rem; border-radius: 0.3rem;" title="Open Ajenono V1 Legacy">
-                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.65rem;"></i> V1 Legacy
-                </a>
-            </div>
-            <ul class="nav-links">
-                @auth
-                    @if(Auth::user()->role === 'admin')
-                        <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                    @elseif(Auth::user()->role === 'teacher')
-                        <li><a href="{{ route('teacher.dashboard') }}">Dashboard</a></li>
-                    @elseif(Auth::user()->role === 'student')
-                        <li><a href="{{ route('student.dashboard') }}">Exam Portal</a></li>
-                    @endif
-                    <li>
-                        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                            @csrf
-                            <button type="submit" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Logout ({{ Auth::user()->name }})</button>
-                        </form>
-                    </li>
-                @else
-                    <li><a href="{{ route('login') }}">Login</a></li>
-                    <li><a href="{{ route('register.school') }}" class="btn btn-primary">Register School</a></li>
-                @endauth
-                
-                <li>
-                    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()">
-                        🌙 Dark
-                    </button>
-                </li>
-            </ul>
+<body class="min-h-screen bg-base-200">
+    {{-- Navbar --}}
+    <div class="navbar bg-base-100 shadow-sm sticky top-0 z-50 border-b border-base-300">
+        <div class="navbar-start">
+            {{-- Mobile menu button --}}
+            @auth
+                <label for="main-drawer" class="btn btn-ghost lg:hidden">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </label>
+            @endauth
+            
+            <a href="{{ url('/') }}" class="btn btn-ghost text-xl font-bold gap-2">
+                <i class="fa-solid fa-graduation-cap text-primary"></i>
+                <span class="hidden sm:inline">Ajenono</span>
+            </a>
         </div>
-    </header>
-
-    <div class="container">
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if(session('error') || $errors->any())
-            <div class="alert alert-danger">
-                @if(session('error')) {{ session('error') }} @endif
-                @foreach($errors->all() as $error)
-                    <div>• {{ $error }}</div>
-                @endforeach
-            </div>
-        @endif
-
-        @yield('content')
+        
+        <div class="navbar-end gap-2">
+            @auth
+                {{-- Theme toggle --}}
+                <label class="swap swap-rotate btn btn-ghost btn-circle">
+                    <input type="checkbox" id="themeToggle" onchange="toggleTheme(this.checked)" />
+                    <i class="fa-solid fa-sun swap-on text-lg"></i>
+                    <i class="fa-solid fa-moon swap-off text-lg"></i>
+                </label>
+                
+                {{-- User dropdown --}}
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="btn btn-ghost gap-2">
+                        <div class="avatar placeholder">
+                            <div class="bg-primary text-primary-content rounded-full w-8">
+                                <span class="text-sm">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                            </div>
+                        </div>
+                        <span class="hidden md:inline text-sm">{{ Auth::user()->name }}</span>
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </div>
+                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow-lg border border-base-300 mt-2">
+                        <li class="menu-title">
+                            <span>{{ ucfirst(Auth::user()->role) }}</span>
+                        </li>
+                        <li>
+                            <a href="{{ Auth::user()->isAdmin() ? route('admin.dashboard') : (Auth::user()->isTeacher() ? route('teacher.dashboard') : route('student.dashboard')) }}">
+                                <i class="fa-solid fa-gauge"></i> Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="text-error">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            @else
+                <label class="swap swap-rotate btn btn-ghost btn-circle">
+                    <input type="checkbox" id="themeToggle" onchange="toggleTheme(this.checked)" />
+                    <i class="fa-solid fa-sun swap-on text-lg"></i>
+                    <i class="fa-solid fa-moon swap-off text-lg"></i>
+                </label>
+                <a href="{{ route('login') }}" class="btn btn-ghost btn-sm">Login</a>
+                <a href="{{ route('register.school') }}" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-school"></i> Register School
+                </a>
+            @endauth
+        </div>
     </div>
 
-    <footer>
-        <p>&copy; {{ date('Y') }} Open Source Online Exam Platform. Made with <i class="fa-solid fa-heart" style="color: #ef4444;"></i> by <a href="https://github.com/animfahmy" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">Achmad An'im</a> &bull; Inspired by <a href="https://wongcjdw.com" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: underline;">Pak Wong</a> (Big thanks!).</p>
+    {{-- Main content with drawer for authenticated users --}}
+    @auth
+        <div class="drawer lg:drawer-open">
+            <input id="main-drawer" type="checkbox" class="drawer-toggle" />
+            
+            {{-- Page content --}}
+            <div class="drawer-content">
+                <div class="p-4 lg:p-6 max-w-7xl mx-auto">
+                    {{-- Flash messages --}}
+                    @if(session('success'))
+                        <div class="alert alert-success mb-4 shadow-sm">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>{{ session('success') }}</span>
+                        </div>
+                    @endif
+                    
+                    @if(session('error') || $errors->any())
+                        <div class="alert alert-error mb-4 shadow-sm">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            <div>
+                                @if(session('error')) {{ session('error') }} @endif
+                                @foreach($errors->all() as $error)
+                                    <div>{{ $error }}</div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if(session('warning'))
+                        <div class="alert alert-warning mb-4 shadow-sm">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>{{ session('warning') }}</span>
+                        </div>
+                    @endif
+
+                    @if(session('info'))
+                        <div class="alert alert-info mb-4 shadow-sm">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>{{ session('info') }}</span>
+                        </div>
+                    @endif
+
+                    @yield('content')
+                </div>
+            </div>
+            
+            {{-- Sidebar --}}
+            <div class="drawer-side z-40">
+                <label for="main-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+                <aside class="bg-base-100 min-h-full w-64 border-r border-base-300">
+                    {{-- Sidebar header --}}
+                    <div class="p-4 border-b border-base-300">
+                        <div class="flex items-center gap-3">
+                            <div class="avatar placeholder">
+                                <div class="bg-primary text-primary-content rounded-lg w-10">
+                                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-sm">Ajenono Exam</h2>
+                                <p class="text-xs text-base-content/60">{{ ucfirst(Auth::user()->role) }} Panel</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{-- Sidebar menu --}}
+                    <ul class="menu p-4 gap-1">
+                        {{-- Admin Menu --}}
+                        @if(Auth::user()->isAdmin())
+                            <li class="menu-title">
+                                <span>Main Menu</span>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-gauge"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="menu-title mt-2">
+                                <span>Management</span>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.teachers') }}" class="{{ request()->routeIs('admin.teachers') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-chalkboard-user"></i> Teachers
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.students') }}" class="{{ request()->routeIs('admin.students') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-user-graduate"></i> Students
+                                </a>
+                            </li>
+                        
+                        {{-- Teacher Menu --}}
+                        @elseif(Auth::user()->isTeacher())
+                            <li class="menu-title">
+                                <span>Main Menu</span>
+                            </li>
+                            <li>
+                                <a href="{{ route('teacher.dashboard') }}" class="{{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-gauge"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="menu-title mt-2">
+                                <span>Exam Management</span>
+                            </li>
+                            <li>
+                                <a href="{{ route('teacher.dashboard') }}#question-banks" class="">
+                                    <i class="fa-solid fa-book"></i> Question Banks
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('teacher.dashboard') }}#exams" class="">
+                                    <i class="fa-solid fa-file-lines"></i> Published Exams
+                                </a>
+                            </li>
+                        
+                        {{-- Student Menu --}}
+                        @else
+                            <li class="menu-title">
+                                <span>Main Menu</span>
+                            </li>
+                            <li>
+                                <a href="{{ route('student.dashboard') }}" class="{{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+                                    <i class="fa-solid fa-gauge"></i> Exam Portal
+                                </a>
+                            </li>
+                            <li class="menu-title mt-2">
+                                <span>Quick Access</span>
+                            </li>
+                            <li>
+                                <a href="{{ route('student.dashboard') }}#enter-token">
+                                    <i class="fa-solid fa-key"></i> Enter Exam Token
+                                </a>
+                            </li>
+                        @endif
+                        
+                        {{-- Common --}}
+                        <li class="menu-title mt-4">
+                            <span>Account</span>
+                        </li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" class="w-full">
+                                @csrf
+                                <button type="submit" class="w-full text-left text-error hover:bg-error/10">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                    
+                    {{-- Sidebar footer --}}
+                    <div class="p-4 border-t border-base-300 mt-auto">
+                        <div class="flex items-center gap-3">
+                            <div class="avatar placeholder">
+                                <div class="bg-primary text-primary-content rounded-full w-8">
+                                    <span class="text-xs">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium truncate">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-base-content/60 truncate">{{ Auth::user()->email }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    @else
+        {{-- Guest content (no sidebar) --}}
+        <div class="min-h-[calc(100vh-4rem)]">
+            @if(session('success'))
+                <div class="max-w-4xl mx-auto px-4 pt-4">
+                    <div class="alert alert-success shadow-sm">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                </div>
+            @endif
+            
+            @if(session('error') || $errors->any())
+                <div class="max-w-4xl mx-auto px-4 pt-4">
+                    <div class="alert alert-error shadow-sm">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        <div>
+                            @if(session('error')) {{ session('error') }} @endif
+                            @foreach($errors->all() as $error)
+                                <div>{{ $error }}</div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if(session('warning'))
+                <div class="max-w-4xl mx-auto px-4 pt-4">
+                    <div class="alert alert-warning shadow-sm">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>{{ session('warning') }}</span>
+                    </div>
+                </div>
+            @endif
+
+            @yield('content')
+        </div>
+    @endauth
+
+    {{-- Footer --}}
+    <footer class="footer footer-center p-4 bg-base-100 text-base-content border-t border-base-300">
+        <aside>
+            <p class="text-sm">
+                &copy; {{ date('Y') }} Ajenono Exam Platform. Made with 
+                <i class="fa-solid fa-heart text-error"></i> by 
+                <a href="https://github.com/animfahmy" target="_blank" rel="noopener noreferrer" class="link link-primary">Achmad An'im</a>
+            </p>
+        </aside>
     </footer>
 
+    {{-- Global Scripts --}}
     <script>
-        function applyTheme(theme) {
+        // Theme management
+        function toggleTheme(isDark) {
+            const theme = isDark ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', theme);
-            const btn = document.getElementById('themeToggle');
-            if (btn) {
-                btn.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i> Light' : '<i class="fa-solid fa-moon"></i> Dark';
-            }
             localStorage.setItem('exam_theme', theme);
         }
 
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-theme') || 'light';
-            const next = current === 'dark' ? 'light' : 'dark';
-            applyTheme(next);
+        function applyTheme() {
+            const saved = localStorage.getItem('exam_theme') || 'light';
+            const isDark = saved === 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+            const toggle = document.getElementById('themeToggle');
+            if (toggle) toggle.checked = isDark;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('exam_theme') || 'light';
-            applyTheme(saved);
-        });
+        document.addEventListener('DOMContentLoaded', applyTheme);
 
-        // Global Glassmorphic Toast Engine (Zero External Dependencies)
+        // Toast notification system
         window.ExamToast = {
             show(message, type = 'info', duration = 3500) {
-                let container = document.getElementById('globalToastContainer');
-                if (!container) {
-                    container = document.createElement('div');
-                    container.id = 'globalToastContainer';
-                    container.className = 'toast-container-wrapper';
-                    document.body.appendChild(container);
-                }
-
+                const container = document.getElementById('toast-container') || this.createContainer();
                 const toast = document.createElement('div');
-                toast.className = `toast-box ${type}`;
                 
-                let iconHtml = '<i class="fa-solid fa-circle-info" style="color: var(--accent);"></i>';
-                if (type === 'success') iconHtml = '<i class="fa-solid fa-circle-check" style="color: var(--status-answered);"></i>';
-                if (type === 'error') iconHtml = '<i class="fa-solid fa-circle-xmark" style="color: var(--danger);"></i>';
-                if (type === 'warning') iconHtml = '<i class="fa-solid fa-triangle-exclamation" style="color: var(--warning);"></i>';
-
-                toast.innerHTML = `${iconHtml} <span>${message}</span>`;
+                const alertClass = {
+                    success: 'alert-success',
+                    error: 'alert-error',
+                    warning: 'alert-warning',
+                    info: 'alert-info'
+                }[type] || 'alert-info';
+                
+                const icon = {
+                    success: 'fa-circle-check',
+                    error: 'fa-circle-xmark',
+                    warning: 'fa-triangle-exclamation',
+                    info: 'fa-circle-info'
+                }[type] || 'fa-circle-info';
+                
+                toast.className = `alert ${alertClass} shadow-lg toast-animate-in`;
+                toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
                 container.appendChild(toast);
-
+                
                 setTimeout(() => {
                     toast.style.opacity = '0';
                     toast.style.transform = 'translateY(-10px)';
@@ -532,37 +390,59 @@
                     setTimeout(() => toast.remove(), 300);
                 }, duration);
             },
+            createContainer() {
+                const container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'toast toast-top toast-end z-[9999]';
+                document.body.appendChild(container);
+                return container;
+            },
             success(msg) { this.show(msg, 'success'); },
             error(msg) { this.show(msg, 'error'); },
             warning(msg) { this.show(msg, 'warning'); },
             info(msg) { this.show(msg, 'info'); }
         };
 
-        // Global Glassmorphic Confirmation Modal Engine
+        // Confirm dialog
         window.ExamConfirm = function(title, text, confirmBtnText = 'Ya, Lanjutkan') {
             return new Promise((resolve) => {
-                const overlay = document.createElement('div');
-                overlay.className = 'confirm-overlay';
-                overlay.innerHTML = `
-                    <div class="confirm-card">
-                        <div style="font-size: 2.5rem; color: var(--warning); margin-bottom: 0.75rem;"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">${title}</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5;">${text}</p>
-                        <div style="display: flex; gap: 0.75rem; justify-content: center;">
-                            <button class="btn btn-secondary" id="confirmBtnCancel" style="flex: 1;">Batal</button>
-                            <button class="btn btn-danger" id="confirmBtnOk" style="flex: 1;">${confirmBtnText}</button>
+                const modal = document.createElement('dialog');
+                modal.className = 'modal modal-open';
+                modal.innerHTML = `
+                    <div class="modal-box">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="p-3 bg-warning/10 rounded-full">
+                                <i class="fa-solid fa-triangle-exclamation text-warning text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-lg">${title}</h3>
+                        </div>
+                        <p class="text-base-content/70 mb-6">${text}</p>
+                        <div class="modal-action">
+                            <button class="btn btn-ghost" id="confirmCancel">Batal</button>
+                            <button class="btn btn-error" id="confirmOk">${confirmBtnText}</button>
                         </div>
                     </div>
+                    <form method="dialog" class="modal-backdrop">
+                        <button>close</button>
+                    </form>
                 `;
-                document.body.appendChild(overlay);
-
-                overlay.querySelector('#confirmBtnCancel').onclick = () => {
-                    overlay.remove();
+                document.body.appendChild(modal);
+                modal.showModal();
+                
+                modal.querySelector('#confirmCancel').onclick = () => {
+                    modal.close();
+                    modal.remove();
                     resolve(false);
                 };
-                overlay.querySelector('#confirmBtnOk').onclick = () => {
-                    overlay.remove();
+                modal.querySelector('#confirmOk').onclick = () => {
+                    modal.close();
+                    modal.remove();
                     resolve(true);
+                };
+                modal.querySelector('.modal-backdrop').onclick = () => {
+                    modal.close();
+                    modal.remove();
+                    resolve(false);
                 };
             });
         };
