@@ -58,9 +58,107 @@
         box-shadow: 0 8px 25px oklch(var(--p) / 0.15);
     }
 
-    /* Input focus glow */
-    .input-glow:focus {
-        box-shadow: 0 0 0 3px oklch(var(--p) / 0.2);
+    /* Custom Input */
+    .input-custom {
+        height: 3rem;
+        padding-left: 2.75rem;
+        padding-right: 1rem;
+        border-width: 1.5px;
+        border-radius: 0.75rem;
+        transition: all 0.2s ease;
+        background: oklch(var(--b1));
+    }
+    .input-custom:focus {
+        border-color: oklch(var(--p));
+        box-shadow: 0 0 0 3px oklch(var(--p) / 0.15);
+        outline: none;
+    }
+    .input-custom.input-error {
+        border-color: oklch(var(--er));
+        box-shadow: 0 0 0 3px oklch(var(--er) / 0.15);
+    }
+    .input-custom::placeholder {
+        color: oklch(var(--bc) / 0.35);
+    }
+
+    /* Input wrapper */
+    .input-wrapper {
+        position: relative;
+    }
+    .input-wrapper .input-icon {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: oklch(var(--bc) / 0.35);
+        transition: color 0.2s ease;
+        pointer-events: none;
+    }
+    .input-wrapper:focus-within .input-icon {
+        color: oklch(var(--p));
+    }
+    .input-wrapper .toggle-password {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: oklch(var(--bc) / 0.35);
+        transition: color 0.2s ease;
+        background: none;
+        border: none;
+        padding: 0.25rem;
+    }
+    .input-wrapper .toggle-password:hover {
+        color: oklch(var(--bc) / 0.7);
+    }
+
+    /* Shake animation for errors */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+        20%, 40%, 60%, 80% { transform: translateX(4px); }
+    }
+    .shake {
+        animation: shake 0.5s ease-in-out;
+    }
+
+    /* Toast animation */
+    @keyframes toast-in {
+        from { opacity: 0; transform: translateY(-16px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toast-out {
+        from { opacity: 1; transform: translateY(0) scale(1); }
+        to { opacity: 0; transform: translateY(-16px) scale(0.95); }
+    }
+    .toast-animate-in {
+        animation: toast-in 0.3s ease forwards;
+    }
+    .toast-animate-out {
+        animation: toast-out 0.3s ease forwards;
+    }
+
+    /* Button loading state */
+    .btn-loading {
+        pointer-events: none;
+        opacity: 0.8;
+    }
+    .btn-loading .btn-text {
+        visibility: hidden;
+    }
+    .btn-loading::after {
+        content: '';
+        position: absolute;
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 2px solid transparent;
+        border-top-color: currentColor;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
 </style>
 @endsection
@@ -76,6 +174,9 @@
         <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[120px] animate-blob animation-delay-2000"></div>
         <div class="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-accent/10 rounded-full blur-[120px] animate-blob animation-delay-4000"></div>
     </div>
+
+    {{-- Toast Container --}}
+    <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center"></div>
 
     {{-- Main Content --}}
     <div class="relative z-10 w-full max-w-5xl mx-auto">
@@ -179,66 +280,78 @@
 
                 {{-- Login Card --}}
                 <div class="glass-card rounded-2xl p-8 shadow-xl">
-                    <div class="mb-6">
+                    <div class="mb-8">
                         <h2 class="text-2xl font-bold">Selamat Datang Kembali</h2>
                         <p class="text-base-content/50 mt-1">Masuk ke akun Anda untuk melanjutkan</p>
                     </div>
 
-                    <form action="{{ route('login') }}" method="POST" class="space-y-4">
+                    <form id="loginForm" action="{{ route('login') }}" method="POST" novalidate>
                         @csrf
                         
                         {{-- Email --}}
-                        <div class="form-control">
-                            <label class="label pb-1">
-                                <span class="label-text font-medium text-sm">Email</span>
+                        <div class="form-control mb-5">
+                            <label class="text-sm font-medium text-base-content/70 mb-2">
+                                Email
                             </label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                class="input input-bordered w-full input-glow transition-all duration-200" 
-                                placeholder="nama@sekolah.sch.id" 
-                                value="{{ old('email') }}" 
-                                required 
-                                autofocus
-                            >
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-envelope input-icon text-sm"></i>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="input-custom w-full" 
+                                    placeholder="nama@sekolah.sch.id" 
+                                    value="{{ old('email') }}" 
+                                    autofocus
+                                >
+                            </div>
+                            <div id="emailError" class="text-xs text-error mt-1.5 hidden"></div>
                         </div>
                         
                         {{-- Password --}}
-                        <div class="form-control">
-                            <label class="label pb-1">
-                                <span class="label-text font-medium text-sm">Password</span>
+                        <div class="form-control mb-5">
+                            <label class="text-sm font-medium text-base-content/70 mb-2">
+                                Password
                             </label>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                class="input input-bordered w-full input-glow transition-all duration-200" 
-                                placeholder="Masukkan password" 
-                                required
-                            >
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-lock input-icon text-sm"></i>
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    class="input-custom w-full pr-10" 
+                                    placeholder="Masukkan password"
+                                >
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                                    <i class="fa-solid fa-eye text-sm" id="toggleIcon"></i>
+                                </button>
+                            </div>
+                            <div id="passwordError" class="text-xs text-error mt-1.5 hidden"></div>
                         </div>
                         
                         {{-- Remember & Forgot --}}
-                        <div class="flex items-center justify-between">
-                            <label class="label cursor-pointer gap-2 justify-start">
-                                <input type="checkbox" id="remember" name="remember" class="checkbox checkbox-primary checkbox-sm" />
-                                <span class="label-text text-sm">Ingat saya</span>
+                        <div class="flex items-center justify-between mb-6">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="remember" name="remember" class="checkbox checkbox-primary checkbox-sm rounded" />
+                                <span class="text-sm text-base-content/60">Ingat saya</span>
                             </label>
-                            <a href="{{ route('password.request') }}" class="link link-primary text-sm font-medium hover:opacity-80">Lupa password?</a>
+                            <a href="{{ route('password.request') }}" class="text-sm text-primary font-medium hover:underline">Lupa password?</a>
                         </div>
                         
                         {{-- Turnstile CAPTCHA --}}
                         @if(config('services.turnstile.site_key'))
-                            <div class="flex justify-center py-2">
+                            <div class="flex justify-center mb-6">
                                 <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}"></div>
                             </div>
                             <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
                         @endif
                         
                         {{-- Submit --}}
-                        <button type="submit" class="btn btn-primary w-full btn-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200">
-                            <i class="fa-solid fa-right-to-bracket"></i> Masuk
+                        <button type="submit" id="submitBtn" class="btn btn-primary w-full h-12 text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200 rounded-xl relative">
+                            <span class="btn-text flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                                <span>Masuk</span>
+                            </span>
                         </button>
                     </form>
                     
@@ -246,14 +359,14 @@
                     <div class="divider text-xs text-base-content/40 my-6">atau</div>
                     
                     {{-- Links --}}
-                    <div class="space-y-2 text-center">
+                    <div class="space-y-3 text-center">
                         <p class="text-sm text-base-content/50">
                             Sekolah baru? 
-                            <a href="{{ route('register.school') }}" class="link link-primary font-semibold">Daftarkan Sekolah</a>
+                            <a href="{{ route('register.school') }}" class="text-primary font-semibold hover:underline">Daftarkan Sekolah</a>
                         </p>
                         <p class="text-sm text-base-content/50">
                             Tidak menerima email verifikasi? 
-                            <a href="{{ route('verification.resend.show') }}" class="link link-primary">Kirim Ulang</a>
+                            <a href="{{ route('verification.resend.show') }}" class="text-primary hover:underline">Kirim Ulang</a>
                         </p>
                     </div>
                 </div>
@@ -266,4 +379,154 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+// Toast notification system
+function showToast(message, type = 'error') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    
+    const icons = {
+        error: 'fa-circle-xmark',
+        success: 'fa-circle-check',
+        warning: 'fa-triangle-exclamation',
+        info: 'fa-circle-info'
+    };
+    
+    const colors = {
+        error: 'bg-error text-error-content border-error',
+        success: 'bg-success text-success-content border-success',
+        warning: 'bg-warning text-warning-content border-warning',
+        info: 'bg-info text-info-content border-info'
+    };
+    
+    toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border ${colors[type]} toast-animate-in max-w-sm`;
+    toast.innerHTML = `
+        <i class="fa-solid ${icons[type]}"></i>
+        <span class="text-sm font-medium">${message}</span>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        toast.classList.remove('toast-animate-in');
+        toast.classList.add('toast-animate-out');
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// Toggle password visibility
+function togglePasswordVisibility() {
+    const input = document.getElementById('password');
+    const icon = document.getElementById('toggleIcon');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// Validate form
+function validateForm() {
+    let isValid = true;
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    
+    // Reset errors
+    email.classList.remove('input-error', 'shake');
+    password.classList.remove('input-error', 'shake');
+    emailError.classList.add('hidden');
+    passwordError.classList.add('hidden');
+    
+    // Validate email
+    if (!email.value.trim()) {
+        email.classList.add('input-error', 'shake');
+        emailError.textContent = 'Email tidak boleh kosong';
+        emailError.classList.remove('hidden');
+        isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        email.classList.add('input-error', 'shake');
+        emailError.textContent = 'Format email tidak valid';
+        emailError.classList.remove('hidden');
+        isValid = false;
+    }
+    
+    // Validate password
+    if (!password.value.trim()) {
+        password.classList.add('input-error', 'shake');
+        passwordError.textContent = 'Password tidak boleh kosong';
+        passwordError.classList.remove('hidden');
+        isValid = false;
+    } else if (password.value.length < 6) {
+        password.classList.add('input-error', 'shake');
+        passwordError.textContent = 'Password minimal 6 karakter';
+        passwordError.classList.remove('hidden');
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        showToast('Mohon lengkapi form dengan benar', 'warning');
+    }
+    
+    return isValid;
+}
+
+// Form submission
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+        return;
+    }
+    
+    // Show loading state
+    const btn = document.getElementById('submitBtn');
+    btn.classList.add('btn-loading');
+    
+    // Submit form
+    setTimeout(() => {
+        this.submit();
+    }, 300);
+});
+
+// Remove error state on input
+document.getElementById('email').addEventListener('input', function() {
+    this.classList.remove('input-error', 'shake');
+    document.getElementById('emailError').classList.add('hidden');
+});
+
+document.getElementById('password').addEventListener('input', function() {
+    this.classList.remove('input-error', 'shake');
+    document.getElementById('passwordError').classList.add('hidden');
+});
+
+// Show server validation errors as toast
+@if($errors->any())
+    @foreach($errors->all() as $error)
+        showToast('{{ addslashes($error) }}', 'error');
+    @endforeach
+@endif
+
+@if(session('error'))
+    showToast('{{ addslashes(session("error")) }}', 'error');
+@endif
+
+@if(session('success'))
+    showToast('{{ addslashes(session("success")) }}', 'success');
+@endif
+
+@if(session('warning'))
+    showToast('{{ addslashes(session("warning")) }}', 'warning');
+@endif
+</script>
 @endsection
