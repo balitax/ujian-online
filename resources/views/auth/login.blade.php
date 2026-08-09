@@ -373,7 +373,7 @@
 
                 {{-- Footer --}}
                 <p class="text-center text-xs text-base-content/40 mt-6">
-                    &copy; {{ date('Y') }} Ajenono Exam Platform. Made with <i class="fa-solid fa-heart text-primary"></i> Open Source.
+                    &copy; {{ date('Y') }} Ajenono Exam Platform. Made with <i class="fa-solid fa-heart text-primary"></i> by <a href="https://github.com/animfahmy" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Achmad An'im</a> &bull; Open Source.
                 </p>
             </div>
         </div>
